@@ -1,0 +1,42 @@
+# Configure the wired ports to form a single bridge
+# We assume wired ports are en* or eth*
+network:
+  version: 2
+  renderer: networkd
+  ethernets:
+    # dedicated port for communicating with the robot's main PC
+    bridge_eno:
+      dhcp4: no
+      dhcp6: no
+      match:
+        name: eno*
+    bridge_eth:
+      dhcp4: no
+      dhcp6: no
+      match:
+        name: eth*
+    bridge_enp:
+      dhcp4: no
+      dhcp6: no
+      match:
+        name: enp*
+    bridge_enx:
+      dhcp4: no
+      dhcp6: no
+      match:
+        name: enx*
+  bridges:
+    sbr0:
+      dhcp4: yes
+      dhcp6: no
+      interfaces: [bridge_eth, bridge_enp, bridge_enx]
+      addresses:
+        - 192.168.131.9/24   # set ip address of the ARK computer to 131.9, clearpath robot is 131.1
+        - 10.255.255.1/24    # keep the original ip address of otto iso for upgrade and service
+
+    att0:
+      dhcp4: no
+      dhcp6: no
+      interfaces: [bridge_eno]
+      addresses:
+        - 10.252.252.1/24

@@ -1,0 +1,38 @@
+{
+  "serializer": "RecipeSerializer",
+  "depends": [
+    "pois.json"
+  ],
+  "content": [
+    {
+      "steps": [
+        {
+          "attributes": {
+            "tolerance_group_json": "[]",
+            "goal_timeout": 0.0
+          },
+          "step_type": "MOVE",
+          "id": "b43581ca-7af5-45f2-bd0f-52e979871b48",
+          "interruptible": true
+        }
+      ],
+      "id": "56362ff4-a985-44a9-92e7-cedc946edf22",
+      "name": "Waypoint Endpoint Move"
+    },
+    {
+      "steps": [
+        {
+          "attributes": {
+            "tolerance_group_json": "[]",
+            "goal_timeout": 0.0
+          },
+          "step_type": "MOVE",
+          "id": "1afd68ee-0989-4997-8e1d-28391e4c3834",
+          "interruptible": true
+        }
+      ],
+      "id": "f65cd366-d463-4153-9bbf-2b93d272c4cb",
+      "name": "Parking Endpoint Move"
+    }
+  ]
+}

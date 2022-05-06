@@ -1,0 +1,30 @@
+{
+  "serializer": "PlaceSerializer",
+  "depends": [
+    "queues.json"
+  ],
+  "content": [
+    {
+      "name": "Parking Endpoint",
+      "description": "Tells a vehicle where it’s allowed to park",
+      "recipes": {
+        "TRANSPORT": "f65cd366-d463-4153-9bbf-2b93d272c4cb",
+        "MOVE": "f65cd366-d463-4153-9bbf-2b93d272c4cb"
+      },
+      "place_type": "TEMPLATE",
+      "primary_marker_intent": "PARKING",
+      "id": "1444a70b-8a28-4a02-8bb3-bd1dabbcfe55"
+    },
+    {
+      "name": "Waypoint Endpoint",
+      "description": "Indicates a location to which a vehicle will travel",
+      "recipes": {
+        "TRANSPORT": "56362ff4-a985-44a9-92e7-cedc946edf22",
+        "MOVE": "56362ff4-a985-44a9-92e7-cedc946edf22"
+      },
+      "place_type": "TEMPLATE",
+      "primary_marker_intent": "WAYPOINT",
+      "id": "63d0a96b-d0eb-40c6-b904-b2e4ae03014a"
+    }
+  ]
+}

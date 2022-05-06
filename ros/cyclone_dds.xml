@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CycloneDDS xmlns="https://cdds.io/config" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://cdds.io/config https://raw.githubusercontent.com/eclipse-cyclonedds/cyclonedds/master/etc/cyclonedds.xsd">
+  <Domain id="any">
+    <General>
+      <!--
+        This assumes that eno1 is configured to be a static port dedicated to communicating
+        with the robot's PC. By default this should use the 10.252.252.0/24 subnet
+        with the robot's PC at 10.252.252.100 and the autonomy PC at 10.252.252.1
+      -->
+      <NetworkInterfaceAddress>att0</NetworkInterfaceAddress>
+      <AllowMulticast>true</AllowMulticast>
+    </General>
+    <Internal>
+      <LeaseDuration>5 min</LeaseDuration>
+    </Internal>
+  </Domain>
+</CycloneDDS>
