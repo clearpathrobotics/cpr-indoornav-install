@@ -20,3 +20,13 @@ bash install.sh
 
 The script is interactive, so pay attention.  Some fields, such as the backpack hostname, must be set when configuring
 the robot's main PC.
+
+
+
+Developer Note on SVG images
+------------------------------
+
+The vector images of the CPR robots should transparent SVG images on a
+230x230 pixel canvas.  The robot itself should sit centered on the canvas,
+with dimensions scaled to approximately 1 pixel = 9.5-9.6mm.  The scale is a
+little loose, but that will give you the correct ballpark.
