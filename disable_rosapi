@@ -1,0 +1,19 @@
+#!/bin/bash
+#
+# This script should only be used if Clearpath's GPS Navigation & IndoorNav software are used on the same robot.
+# This will disable the IndoorNav PC's rosapi node to prevent it from clobbering the one provided by the GPS Nav
+# GUI.
+
+CLEARPATH_VERSION=2.22
+LAUNCH_PATH=/opt/clearpath/${CLEARPATH_VERSION}/share/rosbridge_server/launch/rosbridge_websocket.launch
+
+if [ -f $LAUNCH_PATH ];
+then
+  # make a backup of the original file
+  sudo cp $LAUNCH_PATH $LAUNCH_PATH.bkup.$(date +"%Y%m%d%H%M%S")
+
+  # delete the rosapi node
+  sudo sed -i '/<node name="rosapi"/,/<\/node>/d' $LAUNCH_PATH
+else
+  echo "$LAUNCH_PATH does not exist on this system"
+fi
