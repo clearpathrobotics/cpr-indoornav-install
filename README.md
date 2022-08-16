@@ -21,6 +21,12 @@ bash install.sh
 The script is interactive, so pay attention.  Some fields, such as the backpack hostname, must be set when configuring
 the robot's main PC.
 
+If your robot is equipped with a wireless charger and Clearpaths docking software, you should also run
+```bash
+cd ~/cpr-indoornav-install
+bash enable_docking
+```
+
 
 
 Developer Note on SVG images

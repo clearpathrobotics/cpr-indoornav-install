@@ -451,6 +451,23 @@ else
   log_warn "No vector images for $platform in assets/*; robot model will appear as an OTTO 1500"
 fi
 
+# Replace the charger graphics
+DIR=/opt/clearpath/2.22/share/atlas_mapper/public/node_modules/atlas_common/assets/map/v2/otto_100_charger
+sudo mv $DIR $DIR.$(bkup_suffix)
+sudo mkdir $DIR
+sudo mkdir $DIR/Detailed
+sudo mkdir $DIR/Normal
+sudo mkdir $DIR/Simple
+sudo cp assets/husky-dock.svg $DIR/Detailed/OTTO100charger_detailed_default.svg
+sudo cp assets/husky-dock.svg $DIR/Normal/OTTO100charger_normal_default.svg
+sudo cp assets/husky-dock.svg $DIR/Simple/OTTO100charger_simple_default.svg
+sudo cp assets/husky-dock-hover.svg $DIR/Detailed/OTTO100charger_detailed_hover.svg
+sudo cp assets/husky-dock-hover.svg $DIR/Normal/OTTO100charger_normal_hover.svg
+sudo cp assets/husky-dock-hover.svg $DIR/Simple/OTTO100charger_simple_hover.svg
+sudo cp assets/husky-dock-selected.svg $DIR/Detailed/OTTO100charger_detailed_selected.svg
+sudo cp assets/husky-dock-selected.svg $DIR/Normal/OTTO100charger_normal_selected.svg
+sudo cp assets/husky-dock-selected.svg $DIR/Simple/OTTO100charger_simple_selected.svg
+
 log_success "Rebranding complete"
 
 # make specific changes for webviz
