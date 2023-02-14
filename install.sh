@@ -417,18 +417,31 @@ do
   sudo cp ./assets/clearpath_logo_90_40.svg $f
 done
 
+# Depending on the version we need to modify different directories
+# NOTE 2.24 is untested and may not work!
+ASSETS_DIR=""
+DEFAULT_MAP_DIR=""
+if [ "$OTTO_SOFTWARE_VERSION" == "2.22" ];
+then
+  ASSETS_DIR=/opt/clearpath/${OTTO_SOFTWARE_VERSION}/share/atlas_mapper/public/node_modules/atlas_common/assets
+  DEFAULT_MAP_DIR=/opt/clearpath/$OTTO_SOFTWARE_VERSION/share/cpr_robot_web_api/defaultMap
+else
+  ASSETS_DIR=/opt/clearpath/apps/cpr-otto-app/public/node_modules/atlas_common/assets
+  DEFAULT_MAP_DIR=/opt/clearpath/apps/cpr-robot-web-api/defaultMap
+fi
+
 # Remove unnecessary items from the Endpoints menu
-sudo mv /opt/clearpath/$OTTO_SOFTWARE_VERSION/share/cpr_robot_web_api/defaultMap/places.json /opt/clearpath/$OTTO_SOFTWARE_VERSION/share/cpr_robot_web_api/defaultMap/places.json.$(bkup_suffix)
-sudo mv /opt/clearpath/$OTTO_SOFTWARE_VERSION/share/cpr_robot_web_api/defaultMap/recipes.json /opt/clearpath/$OTTO_SOFTWARE_VERSION/share/cpr_robot_web_api/defaultMap/recipes.json.$(bkup_suffix)
-sudo cp assets/places.json /opt/clearpath/$OTTO_SOFTWARE_VERSION/share/cpr_robot_web_api/defaultMap/places.json
-sudo cp assets/recipes.json /opt/clearpath/$OTTO_SOFTWARE_VERSION/share/cpr_robot_web_api/defaultMap/recipes.json
+sudo mv $DEFAULT_MAP_DIR/places.json $DEFAULT_MAP_DIR/places.json.$(bkup_suffix)
+sudo mv $DEFAULT_MAP_DIR/recipes.json $DEFAULT_MAP_DIR/recipes.json.$(bkup_suffix)
+sudo cp assets/places.json $DEFAULT_MAP_DIR/places.json
+sudo cp assets/recipes.json $DEFAULT_MAP_DIR/recipes.json
 
 # replace the SVG of the robot model (if we have an appropriate graphic)
 # we replace both the default OTTO 1500 and the fallback OTTO Unknown graphics
 if [ -f assets/${platform}_normal.svg ];
 then
   log_info "Replacing robot vector artwork..."
-  DIR=/opt/clearpath/2.22/share/atlas_mapper/public/node_modules/atlas_common/assets/map/v2/otto_1500
+  DIR=$ASSETS_DIR/map/v2/otto_1500
   sudo mv $DIR $DIR.$(bkup_suffix)
   sudo mkdir $DIR
   sudo cp assets/${platform}_lights_detailed.svg $DIR/OTTO1500_lights_detailed.svg
@@ -438,7 +451,7 @@ then
   sudo cp assets/${platform}_normal.svg $DIR/OTTO1500_normal.svg
   sudo cp assets/${platform}_simple.svg $DIR/OTTO1500_simple.svg
 
-  DIR=/opt/clearpath/2.22/share/atlas_mapper/public/node_modules/atlas_common/assets/map/v2/otto_unknown
+  DIR=$ASSETS_DIR/map/v2/otto_unknown
   sudo mv $DIR $DIR.$(bkup_suffix)
   sudo mkdir $DIR
   sudo cp assets/${platform}_lights_detailed.svg $DIR/OTTOUnknown_lights_detailed.svg
@@ -452,7 +465,7 @@ else
 fi
 
 # Replace the charger graphics
-DIR=/opt/clearpath/2.22/share/atlas_mapper/public/node_modules/atlas_common/assets/map/v2/otto_100_charger
+DIR=$ASSETS_DIR/map/v2/otto_100_charger
 sudo mv $DIR $DIR.$(bkup_suffix)
 sudo mkdir $DIR
 sudo mkdir $DIR/Detailed
