@@ -273,6 +273,12 @@ then
   git clone https://gitlab.clearpathrobotics.com/cpr-indoornav/cpr-indoornav-$platform.git
   mv cpr-indoornav-$platform $HOME
   log_success "IndoorNav robot navigation parameters installed!"
+
+  if ! [ -d $HOME/cpr-indoornav-$platform ];
+  then
+    log_error "Failed to download indoornav parameters for $platform"
+    exit 1
+  fi
 else
   # User must provide the path to the tarball we've emailed them
   echo "Enter the path to the IndoorNav tar.gz file provided by Clearpath Robotics"
