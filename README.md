@@ -8,7 +8,7 @@ will serve as an IndoorNav backpack for one of Clearpath's indoor robot platform
 
 This script should be run on the IndoorNav backpack PC.
 
-To use this script, first install the OTTO Motors OS version 2.22.4 as described at help.ottomotors.com.
+To use this script, first install the OTTO Motors OS version 2.28.4 as described at help.ottomotors.com.
 
 Once the core OS is installed, connect the PC to the internet and run the following commands:
 ```bash
