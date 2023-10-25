@@ -275,7 +275,7 @@ echo ""
 ## Detect Otto software version, setup .bashrc, clone packages, setup workspace
 ########################################################################################
 log_info "Detected OTTO software version $OTTO_SOFTWARE_VERSION"
-echo "source /opt/clearpath/$OTTO_SOFTWARE_VERSION/etc/devel/devel_setup.bash" >> $HOME/.bashrc
+echo "source /etc/ros/setup.bash" >> $HOME/.bashrc
 echo "source /home/administrator/cpr-indoornav-${platform}/install/setup.bash" >> $HOME/.bashrc
 
 if ping -c1 gitlab.clearpathrobotics.com > /dev/null;
@@ -319,8 +319,8 @@ fi
 ########################################################################################
 ## Install cpr_indoornav_base to /opt/clearpath
 ########################################################################################
-log_info "Installing cpr-indoornav packages to /opt/clearpath/$OTTO_SOFTWARE_VERSION..."
-INSTALL_DIR="/opt/clearpath/${OTTO_SOFTWARE_VERSION}"
+INSTALL_DIR=$(echo $ROS_PACKAGE_PATH | rev | cut -d ":" -f 1 | rev)
+log_info "Installing cpr-indoornav packages to $INSTALL_DIR"
 
 git clone https://github.com/clearpathrobotics/cpr-indoornav-base.git cpr_indoornav_base
 cd cpr_indoornav_base
