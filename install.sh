@@ -20,6 +20,15 @@ INSTALL_TP_LINK="0"
 # IP address of the ROS Master PC in this robot
 ROS_MASTER_IP="10.252.252.100"
 
+OTTO_SOFTWARE_VERSION=$(ls -r /opt/clearpath | grep -E "^[0-9]+\.[0-9]+$" | head -1)
+if [ -z "$OTTO_SOFTWARE_VERSION" ];
+then
+  # newer versions don't have e.g. /opt/clearpath/2.22 anymore, so we need to get the version
+  # through a different source
+  source /etc/ros/setup.bash
+  OTTO_SOFTWARE_VERSION=$(echo $NIX_BUNDLE_TAG | cut -d "." -f 1,2)
+fi
+
 ########################################################################################
 ## Helpers
 ########################################################################################
@@ -97,11 +106,14 @@ tplink_driver() {
 # the Vecow SPC-7000 series PCs
 e1000e_driver() {
   log_info "Installing e1000e driver"
-  cd ./e1000e/src
-  make
-  sudo make install
+  if [ "$OTTO_SOFTWARE_VERSION" < "2.28" ];
+  then
+    cd ./e1000e/src
+    make
+    sudo make install
+    cd ../..
+  fi
   sudo modprobe e1000
-  cd ../..
   log_success "Installation complete"
 }
 
@@ -262,7 +274,6 @@ echo ""
 ########################################################################################
 ## Detect Otto software version, setup .bashrc, clone packages, setup workspace
 ########################################################################################
-OTTO_SOFTWARE_VERSION=$(ls -r /opt/clearpath | grep -E "^[0-9]+\.[0-9]+$" | head -1)
 log_info "Detected OTTO software version $OTTO_SOFTWARE_VERSION"
 echo "source /opt/clearpath/$OTTO_SOFTWARE_VERSION/etc/devel/devel_setup.bash" >> $HOME/.bashrc
 echo "source /home/administrator/cpr-indoornav-${platform}/install/setup.bash" >> $HOME/.bashrc
@@ -424,7 +435,7 @@ do
 done
 
 # Depending on the version we need to modify different directories
-# NOTE 2.24 is untested and may not work!
+# NOTE 2.24+ is untested and may not work!
 ASSETS_DIR=""
 DEFAULT_MAP_DIR=""
 if [ "$OTTO_SOFTWARE_VERSION" == "2.22" ];
