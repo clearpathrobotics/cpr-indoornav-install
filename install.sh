@@ -317,36 +317,37 @@ fi
 
 
 ########################################################################################
-## Install cpr_indoornav_base to /opt/clearpath
+## Install cpr_indoornav_base to the ROS1 root directory
 ########################################################################################
-INSTALL_DIR=$(echo $ROS_PACKAGE_PATH | rev | cut -d ":" -f 1 | rev)
-log_info "Installing cpr-indoornav packages to $INSTALL_DIR"
+ROS_ROOT_DIR=$(echo $ROS_PACKAGE_PATH | rev | cut -d ":" -f 1 | rev)
+ROS_ROOT_DIR=$(dirname $ROS_ROOT_DIR)      # remove trailing /share
+log_info "Installing cpr-indoornav packages to $ROS_ROOT_DIR"
 
 git clone https://github.com/clearpathrobotics/cpr-indoornav-base.git cpr_indoornav_base
 cd cpr_indoornav_base
 
 # Copy the executables
-sudo mkdir -p $INSTALL_DIR/lib/cpr_indoornav_base
-sudo cp scripts/* $INSTALL_DIR/lib/cpr_indoornav_base
+sudo mkdir -p $ROS_ROOT_DIR/lib/cpr_indoornav_base
+sudo cp scripts/* $ROS_ROOT_DIR/lib/cpr_indoornav_base
 
 # Copy the meta-data
-echo "[INFO] Copying meta-data to $INSTALL_DIR/share/..."
-sudo mkdir -p $INSTALL_DIR/share/cpr_indoornav_base
-sudo cp package.xml $INSTALL_DIR/share/cpr_indoornav_base
+echo "[INFO] Copying meta-data to $ROS_ROOT_DIR/share/..."
+sudo mkdir -p $ROS_ROOT_DIR/share/cpr_indoornav_base
+sudo cp package.xml $ROS_ROOT_DIR/share/cpr_indoornav_base
 
 # Copy the launch files
-echo "[INFO] Copying launch files to $INSTALL_DIR/share/..."
-sudo mkdir -p $INSTALL_DIR/share/cpr_indoornav_base/launch
-sudo cp launch/* $INSTALL_DIR/share/cpr_indoornav_base/launch
+echo "[INFO] Copying launch files to $ROS_ROOT_DIR/share/..."
+sudo mkdir -p $ROS_ROOT_DIR/share/cpr_indoornav_base/launch
+sudo cp launch/* $ROS_ROOT_DIR/share/cpr_indoornav_base/launch
 
 # Ensure all permissions are correct
 echo "[INFO] Setting file permissions"
-sudo chmod 755 $INSTALL_DIR/lib/cpr_indoornav_base
-sudo chmod 755 $INSTALL_DIR/lib/cpr_indoornav_base/*
-sudo chmod 755 $INSTALL_DIR/share/cpr_indoornav_base
-sudo chmod 644 $INSTALL_DIR/share/cpr_indoornav_base/*.xml
-sudo chmod 755 $INSTALL_DIR/share/cpr_indoornav_base/launch
-sudo chmod 644 $INSTALL_DIR/share/cpr_indoornav_base/launch/*.launch
+sudo chmod 755 $ROS_ROOT_DIR/lib/cpr_indoornav_base
+sudo chmod 755 $ROS_ROOT_DIR/lib/cpr_indoornav_base/*
+sudo chmod 755 $ROS_ROOT_DIR/share/cpr_indoornav_base
+sudo chmod 644 $ROS_ROOT_DIR/share/cpr_indoornav_base/*.xml
+sudo chmod 755 $ROS_ROOT_DIR/share/cpr_indoornav_base/launch
+sudo chmod 644 $ROS_ROOT_DIR/share/cpr_indoornav_base/launch/*.launch
 cd ..
 
 ########################################################################################
@@ -420,7 +421,7 @@ log_success "Firewall disabled"
 log_info "Applying rebranding & customized menus"
 
 # edit the Otto App branding to use Clearpath logos & branding
-BRANDED_FILES=$(grep -l -r -i "otto app" /opt/clearpath/$OTTO_SOFTWARE_VERSION/share)
+BRANDED_FILES=$(grep -l -r -i "otto app" $ROS_ROOT_DIR/share)
 for f in $BRANDED_FILES;
 do
   sudo sed -i.$(bkup_suffix) 's/OTTO App/Clearpath App/' $f
@@ -442,9 +443,16 @@ if [ "$OTTO_SOFTWARE_VERSION" == "2.22" ];
 then
   ASSETS_DIR=/opt/clearpath/${OTTO_SOFTWARE_VERSION}/share/atlas_mapper/public/node_modules/atlas_common/assets
   DEFAULT_MAP_DIR=/opt/clearpath/$OTTO_SOFTWARE_VERSION/share/cpr_robot_web_api/defaultMap
-else
+elif [ "$OTTO_SOFTWARE_VERSION" == "2.24" ] ||
+     [ "$OTTO_SOFTWARE_VERSION" == "2.26" ];
+then
   ASSETS_DIR=/opt/clearpath/apps/cpr-otto-app/public/node_modules/atlas_common/assets
   DEFAULT_MAP_DIR=/opt/clearpath/apps/cpr-robot-web-api/defaultMap
+else
+  # 2.28
+  # TODO
+  ASSETS_DIR=
+  DEFAULT_MAP_DIR=
 fi
 
 # Remove unnecessary items from the Endpoints menu
@@ -503,23 +511,23 @@ log_success "Rebranding complete"
 # make specific changes for webviz
 log_info "Updating WebViz configuration..."
 # Remove the left & right scan as they do not exist
-sudo cp /opt/clearpath/$OTTO_SOFTWARE_VERSION/share/cpr_webviz_host/launch/converter.launch /opt/clearpath/$OTTO_SOFTWARE_VERSION/share/cpr_webviz_host/launch/converter.launch.$(bkup_suffix)
-sudo sed -i '/webviz_throttle_left_scan/d' /opt/clearpath/$OTTO_SOFTWARE_VERSION/share/cpr_webviz_host/launch/converter.launch
-sudo sed -i '/webviz_throttle_right_scan/d' /opt/clearpath/$OTTO_SOFTWARE_VERSION/share/cpr_webviz_host/launch/converter.launch
+sudo cp $ROS_ROOT_DIR/share/cpr_webviz_host/launch/converter.launch $ROS_ROOT_DIR/share/cpr_webviz_host/launch/converter.launch.$(bkup_suffix)
+sudo sed -i '/webviz_throttle_left_scan/d' $ROS_ROOT_DIR/share/cpr_webviz_host/launch/converter.launch
+sudo sed -i '/webviz_throttle_right_scan/d' $ROS_ROOT_DIR/share/cpr_webviz_host/launch/converter.launch
 # Remove topics that do not exist
-sudo cp /opt/clearpath/$OTTO_SOFTWARE_VERSION/share/cpr_webviz_host/launch/rosbridge.launch /opt/clearpath/$OTTO_SOFTWARE_VERSION/share/cpr_webviz_host/launch/rosbridge.launch.$(bkup_suffix)
-sudo sed -i '/move_base\/GraphPlanner\/\*/d' /opt/clearpath/$OTTO_SOFTWARE_VERSION/share/cpr_webviz_host/launch/rosbridge.launch
-sudo sed -i '/webviz_realtime_converter\/slam\/magnetic_lines/d' /opt/clearpath/$OTTO_SOFTWARE_VERSION/share/cpr_webviz_host/launch/rosbridge.launch
-sudo sed -i '/left\/scan/d' /opt/clearpath/$OTTO_SOFTWARE_VERSION/share/cpr_webviz_host/launch/rosbridge.launch
-sudo sed -i '/right\/scan/d' /opt/clearpath/$OTTO_SOFTWARE_VERSION/share/cpr_webviz_host/launch/rosbridge.launch
-sudo sed -i '/honeycomb\/pointcloud/d' /opt/clearpath/$OTTO_SOFTWARE_VERSION/share/cpr_webviz_host/launch/rosbridge.launch
-sudo sed -i '/honeycomb\/points/d' /opt/clearpath/$OTTO_SOFTWARE_VERSION/share/cpr_webviz_host/launch/rosbridge.launch
-sudo sed -i '/lift_controller/d' /opt/clearpath/$OTTO_SOFTWARE_VERSION/share/cpr_webviz_host/launch/rosbridge.launch
+sudo cp $ROS_ROOT_DIR/share/cpr_webviz_host/launch/rosbridge.launch $ROS_ROOT_DIR/share/cpr_webviz_host/launch/rosbridge.launch.$(bkup_suffix)
+sudo sed -i '/move_base\/GraphPlanner\/\*/d' $ROS_ROOT_DIR/share/cpr_webviz_host/launch/rosbridge.launch
+sudo sed -i '/webviz_realtime_converter\/slam\/magnetic_lines/d' $ROS_ROOT_DIR/share/cpr_webviz_host/launch/rosbridge.launch
+sudo sed -i '/left\/scan/d' $ROS_ROOT_DIR/share/cpr_webviz_host/launch/rosbridge.launch
+sudo sed -i '/right\/scan/d' $ROS_ROOT_DIR/share/cpr_webviz_host/launch/rosbridge.launch
+sudo sed -i '/honeycomb\/pointcloud/d' $ROS_ROOT_DIR/share/cpr_webviz_host/launch/rosbridge.launch
+sudo sed -i '/honeycomb\/points/d' $ROS_ROOT_DIR/share/cpr_webviz_host/launch/rosbridge.launch
+sudo sed -i '/lift_controller/d' $ROS_ROOT_DIR/share/cpr_webviz_host/launch/rosbridge.launch
 # Logo & branding swap
-sudo cp /opt/clearpath/$OTTO_SOFTWARE_VERSION/share/cpr_webviz_host/landing/index.html /opt/clearpath/$OTTO_SOFTWARE_VERSION/share/cpr_webviz_host/landing/index.html.$(bkup_suffix)
-sudo sed -i 's/href="http:\/\/ottomotors.com\/"/href="http:\/\/clearpathrobotics.com\/"/g' /opt/clearpath/$OTTO_SOFTWARE_VERSION/share/cpr_webviz_host/landing/index.html
-sudo sed -i 's/src="otto_motors_light.svg" alt="OTTO Motors"/src="clearpath_logo.svg" alt="Clearpath Robotics"/g' /opt/clearpath/$OTTO_SOFTWARE_VERSION/share/cpr_webviz_host/landing/index.html
-sudo cp assets/clearpath_logo_90_40.svg /opt/clearpath/$OTTO_SOFTWARE_VERSION/share/cpr_webviz_host/landing/clearpath_logo.svg
+sudo cp $ROS_ROOT_DIR/share/cpr_webviz_host/landing/index.html $ROS_ROOT_DIR/share/cpr_webviz_host/landing/index.html.$(bkup_suffix)
+sudo sed -i 's/href="http:\/\/ottomotors.com\/"/href="http:\/\/clearpathrobotics.com\/"/g' $ROS_ROOT_DIR/share/cpr_webviz_host/landing/index.html
+sudo sed -i 's/src="otto_motors_light.svg" alt="OTTO Motors"/src="clearpath_logo.svg" alt="Clearpath Robotics"/g' $ROS_ROOT_DIR/share/cpr_webviz_host/landing/index.html
+sudo cp assets/clearpath_logo_90_40.svg $ROS_ROOT_DIR/share/cpr_webviz_host/landing/clearpath_logo.svg
 # Done!
 log_success "WebViz configuration complete"
 
