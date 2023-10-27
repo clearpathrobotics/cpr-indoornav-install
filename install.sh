@@ -449,17 +449,22 @@ then
   ASSETS_DIR=/opt/clearpath/apps/cpr-otto-app/public/node_modules/atlas_common/assets
   DEFAULT_MAP_DIR=/opt/clearpath/apps/cpr-robot-web-api/defaultMap
 else
-  # 2.28
-  # TODO
-  ASSETS_DIR=
-  DEFAULT_MAP_DIR=
+  ASSETS_DIR=$OTTO_APP_PUBLIC/node_modules/atlas_common/assets
+  DEFAULT_MAP_DIR=# TODO
 fi
 
 # Remove unnecessary items from the Endpoints menu
-sudo mv $DEFAULT_MAP_DIR/places.json $DEFAULT_MAP_DIR/places.json.$(bkup_suffix)
-sudo mv $DEFAULT_MAP_DIR/recipes.json $DEFAULT_MAP_DIR/recipes.json.$(bkup_suffix)
-sudo cp assets/places.json $DEFAULT_MAP_DIR/places.json
-sudo cp assets/recipes.json $DEFAULT_MAP_DIR/recipes.json
+if [ "$OTTO_SOFTWARE_VERSION" < "2.28" ];
+then
+  sudo mv $DEFAULT_MAP_DIR/places.json $DEFAULT_MAP_DIR/places.json.$(bkup_suffix)
+  sudo mv $DEFAULT_MAP_DIR/recipes.json $DEFAULT_MAP_DIR/recipes.json.$(bkup_suffix)
+  sudo cp assets/places.json $DEFAULT_MAP_DIR/places.json
+  sudo cp assets/recipes.json $DEFAULT_MAP_DIR/recipes.json
+else
+  # There's no more default map in 2.28
+  # TODO
+  echo -n
+fi
 
 # replace the SVG of the robot model (if we have an appropriate graphic)
 # we replace both the default OTTO 1500 and the fallback OTTO Unknown graphics
