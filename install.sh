@@ -106,7 +106,7 @@ tplink_driver() {
 # the Vecow SPC-7000 series PCs
 e1000e_driver() {
   log_info "Installing e1000e driver"
-  if [ "$OTTO_SOFTWARE_VERSION" < "2.28" ];
+  if [[ "$OTTO_SOFTWARE_VERSION" < "2.28" ]];
   then
     cd ./e1000e/src
     make
@@ -455,7 +455,7 @@ else
 fi
 
 # Remove unnecessary items from the Endpoints menu
-if [ "$OTTO_SOFTWARE_VERSION" < "2.28" ];
+if [[ "$OTTO_SOFTWARE_VERSION" < "2.28" ]];
 then
   sudo mv $DEFAULT_MAP_DIR/places.json $DEFAULT_MAP_DIR/places.json.$(bkup_suffix)
   sudo mv $DEFAULT_MAP_DIR/recipes.json $DEFAULT_MAP_DIR/recipes.json.$(bkup_suffix)
