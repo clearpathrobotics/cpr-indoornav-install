@@ -450,7 +450,8 @@ then
   DEFAULT_MAP_DIR=/opt/clearpath/apps/cpr-robot-web-api/defaultMap
 else
   ASSETS_DIR=$OTTO_APP_PUBLIC/node_modules/atlas_common/assets
-  DEFAULT_MAP_DIR=# TODO
+  # There is no default map in 2.28
+  DEFAULT_MAP_DIR=/tmp
 fi
 
 # Remove unnecessary items from the Endpoints menu
