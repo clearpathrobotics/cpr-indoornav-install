@@ -409,7 +409,7 @@ log_success "Firewall disabled"
 log_info "Applying rebranding & customized menus"
 
 # edit the Otto App branding to use Clearpath logos & branding
-BRANDED_FILES=$(grep -l -r -i "otto app" /opt/clearpath/$OTTO_SOFTWARE_VERSION/share)
+BRANDED_FILES=$(grep -l -r -i "otto app" /opt/clearpath/apps)
 for f in $BRANDED_FILES;
 do
   sudo sed -i.$(bkup_suffix) 's/OTTO App/Clearpath App/' $f
