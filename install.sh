@@ -273,6 +273,12 @@ then
   git clone https://gitlab.clearpathrobotics.com/cpr-indoornav/cpr-indoornav-$platform.git
   mv cpr-indoornav-$platform $HOME
   log_success "IndoorNav robot navigation parameters installed!"
+
+  if ! [ -d $HOME/cpr-indoornav-$platform ];
+  then
+    log_error "Failed to download indoornav parameters for $platform"
+    exit 1
+  fi
 else
   # User must provide the path to the tarball we've emailed them
   echo "Enter the path to the IndoorNav tar.gz file provided by Clearpath Robotics"
@@ -403,7 +409,7 @@ log_success "Firewall disabled"
 log_info "Applying rebranding & customized menus"
 
 # edit the Otto App branding to use Clearpath logos & branding
-BRANDED_FILES=$(grep -l -r -i "otto app" /opt/clearpath/$OTTO_SOFTWARE_VERSION/share)
+BRANDED_FILES=$(grep -l -r -i "otto app" /opt/clearpath/apps)
 for f in $BRANDED_FILES;
 do
   sudo sed -i.$(bkup_suffix) 's/OTTO App/Clearpath App/' $f
@@ -417,18 +423,31 @@ do
   sudo cp ./assets/clearpath_logo_90_40.svg $f
 done
 
+# Depending on the version we need to modify different directories
+# NOTE 2.24 is untested and may not work!
+ASSETS_DIR=""
+DEFAULT_MAP_DIR=""
+if [ "$OTTO_SOFTWARE_VERSION" == "2.22" ];
+then
+  ASSETS_DIR=/opt/clearpath/${OTTO_SOFTWARE_VERSION}/share/atlas_mapper/public/node_modules/atlas_common/assets
+  DEFAULT_MAP_DIR=/opt/clearpath/$OTTO_SOFTWARE_VERSION/share/cpr_robot_web_api/defaultMap
+else
+  ASSETS_DIR=/opt/clearpath/apps/cpr-otto-app/public/node_modules/atlas_common/assets
+  DEFAULT_MAP_DIR=/opt/clearpath/apps/cpr-robot-web-api/defaultMap
+fi
+
 # Remove unnecessary items from the Endpoints menu
-sudo mv /opt/clearpath/$OTTO_SOFTWARE_VERSION/share/cpr_robot_web_api/defaultMap/places.json /opt/clearpath/$OTTO_SOFTWARE_VERSION/share/cpr_robot_web_api/defaultMap/places.json.$(bkup_suffix)
-sudo mv /opt/clearpath/$OTTO_SOFTWARE_VERSION/share/cpr_robot_web_api/defaultMap/recipes.json /opt/clearpath/$OTTO_SOFTWARE_VERSION/share/cpr_robot_web_api/defaultMap/recipes.json.$(bkup_suffix)
-sudo cp assets/places.json /opt/clearpath/$OTTO_SOFTWARE_VERSION/share/cpr_robot_web_api/defaultMap/places.json
-sudo cp assets/recipes.json /opt/clearpath/$OTTO_SOFTWARE_VERSION/share/cpr_robot_web_api/defaultMap/recipes.json
+sudo mv $DEFAULT_MAP_DIR/places.json $DEFAULT_MAP_DIR/places.json.$(bkup_suffix)
+sudo mv $DEFAULT_MAP_DIR/recipes.json $DEFAULT_MAP_DIR/recipes.json.$(bkup_suffix)
+sudo cp assets/places.json $DEFAULT_MAP_DIR/places.json
+sudo cp assets/recipes.json $DEFAULT_MAP_DIR/recipes.json
 
 # replace the SVG of the robot model (if we have an appropriate graphic)
 # we replace both the default OTTO 1500 and the fallback OTTO Unknown graphics
 if [ -f assets/${platform}_normal.svg ];
 then
   log_info "Replacing robot vector artwork..."
-  DIR=/opt/clearpath/2.22/share/atlas_mapper/public/node_modules/atlas_common/assets/map/v2/otto_1500
+  DIR=$ASSETS_DIR/map/v2/otto_1500
   sudo mv $DIR $DIR.$(bkup_suffix)
   sudo mkdir $DIR
   sudo cp assets/${platform}_lights_detailed.svg $DIR/OTTO1500_lights_detailed.svg
@@ -438,7 +457,7 @@ then
   sudo cp assets/${platform}_normal.svg $DIR/OTTO1500_normal.svg
   sudo cp assets/${platform}_simple.svg $DIR/OTTO1500_simple.svg
 
-  DIR=/opt/clearpath/2.22/share/atlas_mapper/public/node_modules/atlas_common/assets/map/v2/otto_unknown
+  DIR=$ASSETS_DIR/map/v2/otto_unknown
   sudo mv $DIR $DIR.$(bkup_suffix)
   sudo mkdir $DIR
   sudo cp assets/${platform}_lights_detailed.svg $DIR/OTTOUnknown_lights_detailed.svg
@@ -452,7 +471,7 @@ else
 fi
 
 # Replace the charger graphics
-DIR=/opt/clearpath/2.22/share/atlas_mapper/public/node_modules/atlas_common/assets/map/v2/otto_100_charger
+DIR=$ASSETS_DIR/map/v2/otto_100_charger
 sudo mv $DIR $DIR.$(bkup_suffix)
 sudo mkdir $DIR
 sudo mkdir $DIR/Detailed
@@ -478,7 +497,6 @@ sudo sed -i '/webviz_throttle_left_scan/d' /opt/clearpath/$OTTO_SOFTWARE_VERSION
 sudo sed -i '/webviz_throttle_right_scan/d' /opt/clearpath/$OTTO_SOFTWARE_VERSION/share/cpr_webviz_host/launch/converter.launch
 # Remove topics that do not exist
 sudo cp /opt/clearpath/$OTTO_SOFTWARE_VERSION/share/cpr_webviz_host/launch/rosbridge.launch /opt/clearpath/$OTTO_SOFTWARE_VERSION/share/cpr_webviz_host/launch/rosbridge.launch.$(bkup_suffix)
-sudo sed -i '/move_base\/GraphPlanner\/\*/d' /opt/clearpath/$OTTO_SOFTWARE_VERSION/share/cpr_webviz_host/launch/rosbridge.launch
 sudo sed -i '/webviz_realtime_converter\/slam\/magnetic_lines/d' /opt/clearpath/$OTTO_SOFTWARE_VERSION/share/cpr_webviz_host/launch/rosbridge.launch
 sudo sed -i '/left\/scan/d' /opt/clearpath/$OTTO_SOFTWARE_VERSION/share/cpr_webviz_host/launch/rosbridge.launch
 sudo sed -i '/right\/scan/d' /opt/clearpath/$OTTO_SOFTWARE_VERSION/share/cpr_webviz_host/launch/rosbridge.launch
