@@ -270,7 +270,7 @@ echo "source /home/administrator/cpr-indoornav-${platform}/install/setup.bash" >
 if ping -c1 gitlab.clearpathrobotics.com > /dev/null;
 then
   # Clone pre-built parameter workspace if we're running inside clearpath's internal network
-  git clone https://gitlab.clearpathrobotics.com/cpr-indoornav/cpr-indoornav-$platform.git
+  git clone https://gitlab.clearpathrobotics.com/cpr-indoornav/cpr-indoornav-$platform.git -b otto-2.22
   mv cpr-indoornav-$platform $HOME
   log_success "IndoorNav robot navigation parameters installed!"
 else
@@ -305,7 +305,7 @@ fi
 log_info "Installing cpr-indoornav packages to /opt/clearpath/$OTTO_SOFTWARE_VERSION..."
 INSTALL_DIR="/opt/clearpath/${OTTO_SOFTWARE_VERSION}"
 
-git clone https://github.com/clearpathrobotics/cpr-indoornav-base.git cpr_indoornav_base
+git clone https://github.com/clearpathrobotics/cpr-indoornav-base.git cpr_indoornav_base -b otto-2.22
 cd cpr_indoornav_base
 
 # Copy the executables
