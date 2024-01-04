@@ -497,7 +497,6 @@ sudo sed -i '/webviz_throttle_left_scan/d' /opt/clearpath/$OTTO_SOFTWARE_VERSION
 sudo sed -i '/webviz_throttle_right_scan/d' /opt/clearpath/$OTTO_SOFTWARE_VERSION/share/cpr_webviz_host/launch/converter.launch
 # Remove topics that do not exist
 sudo cp /opt/clearpath/$OTTO_SOFTWARE_VERSION/share/cpr_webviz_host/launch/rosbridge.launch /opt/clearpath/$OTTO_SOFTWARE_VERSION/share/cpr_webviz_host/launch/rosbridge.launch.$(bkup_suffix)
-sudo sed -i '/move_base\/GraphPlanner\/\*/d' /opt/clearpath/$OTTO_SOFTWARE_VERSION/share/cpr_webviz_host/launch/rosbridge.launch
 sudo sed -i '/webviz_realtime_converter\/slam\/magnetic_lines/d' /opt/clearpath/$OTTO_SOFTWARE_VERSION/share/cpr_webviz_host/launch/rosbridge.launch
 sudo sed -i '/left\/scan/d' /opt/clearpath/$OTTO_SOFTWARE_VERSION/share/cpr_webviz_host/launch/rosbridge.launch
 sudo sed -i '/right\/scan/d' /opt/clearpath/$OTTO_SOFTWARE_VERSION/share/cpr_webviz_host/launch/rosbridge.launch
