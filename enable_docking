@@ -3,12 +3,4 @@
 # to allow Clearpath Robotics' wireless charger docking (originally
 # developped for GPS navigation) to be used with IndoorNav
 
-FILE=/opt/clearpath/2.22/share/cpr_base_navigation/launch/navigation.launch
-if [ -f $FILE ];
-then
-  sudo sed -i 's/arg name="enable_target_tracking" default="$(optenv ENABLE_LIDARS true)"/arg name="enable_target_tracking" default="$(optenv ENABLE_TARGET_TRACKING true)"/g' $FILE
-else
-  echo "[ERR ] $FILE doesn't exist. Docking may not work correctly"
-fi
-
-echo "export ENABLE_TARGET_TRACKING=false" | sudo tee -a /etc/ros/setup.bash
+echo "Docking no longer supported; sorry."
